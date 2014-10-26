@@ -3,6 +3,8 @@
 
 import pygame, random
 
+from mob import Soldier
+
 class GameHandler:
 	def __init__(self, data):
 		data.newGame()
@@ -11,9 +13,14 @@ class GameHandler:
 		data.level = Level(data, 'dirt')
 		data.level.loadRoom(data, 'test')
 
+		Soldier(data, (900, 300))
+
 
 	def update(self, data):
 		data.gameSurf.blit(data.level.surf, (0, 0))
+
+		data.soldiers.update(data)
+
 		data.screen.blit(data.gameSurf, data.gameRect)
 
 
