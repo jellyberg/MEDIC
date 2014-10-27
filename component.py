@@ -1,7 +1,7 @@
 # 
 # a game by Adam Binks
 
-import pygame
+import pygame, math
 
 class MovementComponent:
 	"""Handles basic movement in 8 directions"""
@@ -13,10 +13,14 @@ class MovementComponent:
 		self.master.destination = self.master.trueCoords
 
 		if usePathfinding:
-			pass  # INIT PATHFINDING STUFF
+			self.usePathfinding = True
+			self.path = []
 
 
 	def update(self, data):
+		if self.usePathfinding and self.path:
+			self.master.destination = data.cellToPix(self.path[0])
+
 		if self.master.destination != self.master.rect.topleft:
 			move = [0, 0]  # should move R/L and UP/DOWN?
 
@@ -37,7 +41,112 @@ class MovementComponent:
 				self.master.trueCoords[axis] += move[axis] * moveSpeed * data.dt
 
 		self.master.rect.topleft = self.master.trueCoords
+		if self.usePathfinding and self.path and data.pixToCells(self.master.rect.topleft) == self.path[0]:
+			del self.path[0]
+
+		print str(self.path)
 
 
 	def goToCoords(self, coords, data):
-		pass
+		"""Start going towards specified coords"""
+		if self.usePathfinding:
+			self.path = []
+			startCoords = data.pixToCells(self.master.rect.topleft)
+			endCoords = coords
+
+			for node in data.nodes:
+				if node.coords == startCoords:
+					startNode = node
+				elif node.coords == endCoords:
+					endNode = node
+			self.path = self.findPath(startNode, endNode, data)
+		
+		else:
+			self.master.destination = coords
+
+
+	def findPath(self, startNode, endNode, data):
+		"""Use A* pathfinding to find the fastest route from A to B"""
+		reachable = [startNode]  # nodes that are reachable but unexplored
+		explored = []	# nodes that have been explored
+
+		for node in data.nodes:
+			node.resetValues()
+
+		while reachable != []:
+			# Choose some node we know how to reach
+			node = self.chooseNode(reachable, endNode)
+
+			# If we just got to the goal node, build and return the path
+			if node == endNode:
+				return self.buildPath(endNode)
+
+			# Don't repeat ourselves
+			reachable.remove(node)
+			explored.append(node)
+
+			# Where can we get from here that we haven't explored before?
+			newReachable = list(set(self.getAdjacentNodes(node, data)) - set(explored))
+			for adjacent in newReachable:
+				# If this is a new path, or a shorter path than what we have, keep it
+				if adjacent not in reachable or node.cost + 1 < adjacent.cost:
+					adjacent.previous = node
+					adjacent.cost = node.cost + 1
+
+				# First time we see this node?
+				if adjacent not in reachable:
+					reachable.append(adjacent)
+
+
+		# If we get here, no path was found
+		print 'no path found'
+		return None
+
+
+	def chooseNode(self, reachable, endNode):
+		"""Choose the next node from reachable nodes to explore"""
+		minCost = 9999999999999999999999999999999999999999999999999999999999
+		bestNode = None
+
+		for node in reachable:
+			costStartToNode = node.cost
+			costNodeToGoal = self.estimateDistance(node, endNode)
+			totalCost = costStartToNode + costNodeToGoal
+
+			if minCost > totalCost:
+				minCost = totalCost
+				bestNode = node
+
+		return bestNode
+
+
+	def buildPath(self, toNode):
+		"""Build self.path: a list of coordinates to follow to reach the destination"""
+		path = []
+		while toNode is not None:
+			path = [toNode.coords] + path  # add the coords to the start of the path
+			toNode = toNode.previous
+		print str(path)
+		return path
+
+
+	def estimateDistance(self, startNode, endNode):
+		"""Use pythagorus to get the distance between startNode and endNode as the crow flies"""
+		x1, y1 = startNode.coords
+		x2, y2 = endNode.coords
+		return math.sqrt( (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2) )
+
+
+	def getAdjacentNodes(self, node, data):
+		"""Returns a list of adjacent passable nodes (no diagonals)"""
+		x, y = node.coords
+		possibleCoords = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+
+		adjacent = []
+		for node in data.nodes:
+			if node.passable:
+				for adjCoord in possibleCoords:
+					if node.coords == adjCoord:
+						adjacent.append(node)
+
+		return adjacent

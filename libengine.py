@@ -3,7 +3,7 @@
 import pygame
 pygame.mixer.pre_init(44100, -16, 2, 512)   # use a lower buffersize to reduce sound latency
 pygame.init()
-import input, game
+import input, game, math
 
 def run():
 	stateHandler = StateHandler()
@@ -67,6 +67,16 @@ class Data:
 
 	def saveGame(self):
 		pass
+
+
+	def pixToCells(self, pix):
+		"""Convert pixel coords to cell coords"""
+		return (int(math.floor(pix[0] / self.CELLSIZE)), int(math.floor(pix[1] / self.CELLSIZE)))
+
+
+	def cellToPix(self, cell):
+		"""Convert cell coords to pixel coords"""
+		return (cell[0] * self.CELLSIZE, cell[1] * self.CELLSIZE)
 
 
 if __name__ == '__main__':

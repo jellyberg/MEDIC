@@ -13,8 +13,6 @@ class GameHandler:
 		data.level = Level(data, 'dirt')
 		data.level.loadRoom(data, 'test')
 
-		Soldier(data, (900, 300))
-
 
 	def update(self, data):
 		data.gameSurf.blit(data.level.surf, (0, 0))
@@ -27,6 +25,7 @@ class GameHandler:
 
 class Level:
 	terrainTypes = ['grass', 'dirt', 'stone', 'barrel', 'crate']
+	passableTerrainTypes = ['dirt', 'grass']
 	def __init__(self, data, bgCellTerrain):
 		self.loadTerrainImages(data)
 		self.bgCellTerrain = bgCellTerrain
@@ -40,10 +39,20 @@ class Level:
 	def genRoom(self, data):
 		"""Generates a 2d list self.room containing strings of what terrain type is in each cell"""
 		self.room = []
+		data.nodes = []
+
 		for x in range(data.XCELLS):
 			column = []
 			for y in range(data.YCELLS):
-				column.append(random.choice(['dirt', 'dirt', 'dirt', 'crate', 'barrel']))
+				cellType = random.choice(['dirt', 'dirt', 'dirt', 'crate', 'barrel'])
+				column.append(cellType)
+
+				# TEMP
+				if cellType == 'dirt' and len(data.soldiers) == 0 and y > 1 and x > 1:
+					Soldier((x, y), data)
+
+				data.nodes.append(Node((x, y), cellType in Level.passableTerrainTypes))
+
 			self.room.append(column)
 
 
@@ -67,3 +76,18 @@ class Level:
 		self.terrainSurfs = {}
 		for terrain in Level.terrainTypes:
 			self.terrainSurfs[terrain] = data.loadImage('assets/terrain/%s.png' %(terrain))
+
+
+
+class Node:
+	"""A simple container for some data used in pathfinding"""
+	def __init__(self, coords, passable):
+		"""Passable = can be walked over/through"""
+		self.coords = coords
+		self.passable = passable
+
+
+	def resetValues(self):
+		"""Reset values for a new path to be found"""
+		self.previous = None
+		self.cost = 99999999999999999999999
