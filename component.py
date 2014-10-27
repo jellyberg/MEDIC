@@ -54,13 +54,17 @@ class MovementComponent:
 			startCoords = data.pixToCells(self.master.rect.topleft)
 			endCoords = coords
 
+			endNode = 'unspecified'
 			for node in data.nodes:
 				if node.coords == startCoords:
 					startNode = node
-				elif node.coords == endCoords:
+				if node.coords == endCoords:
 					endNode = node
+			if endNode == 'unspecified':
+				print 'endNode not found. coords: %s' %(str(endCoords))
+				data.input.terminate()
 			self.path = self.findPath(startNode, endNode, data)
-		
+			
 		else:
 			self.master.destination = coords
 
@@ -131,10 +135,10 @@ class MovementComponent:
 
 
 	def estimateDistance(self, startNode, endNode):
-		"""Use pythagorus to get the distance between startNode and endNode as the crow flies"""
+		"""Manhattan distance between startNode and endNode as the crow flies (in a zigzag. it's a drunk crow.)"""
 		x1, y1 = startNode.coords
 		x2, y2 = endNode.coords
-		return math.sqrt( (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2) )
+		return math.fabs(x1 - x2) + math.fabs(y1 - y2)
 
 
 	def getAdjacentNodes(self, node, data):
