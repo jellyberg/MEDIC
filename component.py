@@ -32,8 +32,8 @@ class MovementComponent:
 					move[axis] = -1
 
 
-			if move[0] != 0 and move[1] != 0: # if moving diagonally move 1/2 distance in each direction
-				moveSpeed = self.master.speed / 2.0
+			if move[0] != 0 and move[1] != 0: # if moving diagonally move smaller distance in each direction
+				moveSpeed = self.master.speed * 0.6
 			else:
 				moveSpeed = self.master.speed
 
@@ -149,3 +149,47 @@ class MovementComponent:
 						adjacent.append(node)
 
 		return adjacent
+
+
+
+class CollisionComponent:
+	"""A component which prevents a mob from standing on tiles that are not passable"""
+	cornerMargin = 5
+	def __init__(self, master):
+		self.master = master
+
+
+	def updateWorldCollision(self, data):
+		"""
+		Check whether any of 8 collision points on master.rect collide with an inpassable tile.
+		If so move master.rect so it doesn't collide.
+		____________
+		|  `    `  |  << collision points look kind of like this (except they're on the edge of the rect)
+		|.        .|
+		|.        .|
+		|__.____.__|
+		"""
+		rect = self.master.rect
+		margin = CollisionComponent.cornerMargin
+		pointsDict = {'lefttop': (rect.left + margin, rect.top),       'righttop': (rect.right - margin, rect.top),
+					  'leftbottom': (rect.left + margin, rect.bottom), 'rightbottom': (rect.right - margin, rect.bottom),
+					  'topright': (rect.right, rect.top + margin),     'bottomright': (rect.right, rect.bottom - margin),
+					  'topleft': (rect.left, rect.top + margin),       'bottomleft': (rect.left, rect.bottom - margin)}
+
+		for point in pointsDict.keys():
+			isPassable, collidedCoord = self.pointIsPassable(pointsDict[point], data)
+			if not isPassable:
+				if point in ['lefttop', 'righttop']:
+					self.master.rect.top = data.cellToPix((0, collidedCoord[1] + 1))[1] + 1
+				if point in ['leftbottom', 'rightbottom']:
+					self.master.rect.bottom = data.cellToPix((0, collidedCoord[1]))[1] - 1
+				if point in ['topright', 'bottomright']:
+					self.master.rect.right = data.cellToPix((collidedCoord[0], 0))[0] - 1
+				if point in ['topleft', 'bottomleft']:
+					self.master.rect.left = data.cellToPix((collidedCoord[0] + 1, 0))[0] + 1
+
+				self.master.trueCoords = list(self.master.rect.topleft)
+
+
+	def pointIsPassable(self, point, data):
+		return (data.level.coordIsPassable(data.pixToCells(point)), data.pixToCells(point))

@@ -3,7 +3,7 @@
 
 import pygame, random
 
-from mob import Soldier
+from mob import Soldier, Player
 
 class GameHandler:
 	def __init__(self, data):
@@ -20,6 +20,7 @@ class GameHandler:
 		data.gameSurf.blit(data.level.surf, (0, 0))
 
 		data.soldiers.update(data)
+		data.players.update(data)
 
 		data.screen.blit(data.gameSurf, data.gameRect)
 
@@ -54,9 +55,10 @@ class Level:
 					cellType = 'dirt'
 				column.append(cellType)
 
-				# TEMP
-				if cellType == 'dirt' and len(data.soldiers) == 0 and y > 1 and x > 1:
+				# TEMP - player/soldier will appear in doorway
+				if cellType == 'dirt' and len(data.soldiers) == 0:
 					Soldier((x, y), data)
+					Player((x, y), data)
 
 				data.nodes.append(Node((x, y), cellType in Level.passableTerrainTypes))
 
@@ -98,6 +100,11 @@ class Level:
 				lastEnd = i + 1
 
 		return rooms
+
+
+	def coordIsPassable(self, coord):
+		"""Returns True if the given coordinate can be walked through, else returns False"""
+		return self.room[coord[0]][coord[1]] in Level.passableTerrainTypes
 
 
 

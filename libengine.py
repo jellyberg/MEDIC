@@ -4,6 +4,7 @@ import pygame
 pygame.mixer.pre_init(44100, -16, 2, 512)   # use a lower buffersize to reduce sound latency
 pygame.init()
 import input, game, math
+from pygame.locals import *
 
 def run():
 	stateHandler = StateHandler()
@@ -42,8 +43,10 @@ class Data:
 		self.screen = pygame.display.set_mode((self.WINDOWWIDTH, self.WINDOWHEIGHT))#, pygame.locals.FULLSCREEN)
 
 		self.FPSClock = pygame.time.Clock()
-		self.FPS = 120
+		self.FPS = 200
 		self.input = input.Input()
+
+		self.keybinds = {'moveUp': K_w, 'moveLeft': K_a, 'moveRight': K_d, 'moveDown': K_s}
 
 
 	def newGame(self):
@@ -56,7 +59,9 @@ class Data:
 
 		self.gameRect = self.gameSurf.get_rect(center = (self.WINDOWWIDTH / 2, self.WINDOWHEIGHT / 2))
 
+		self.players  = pygame.sprite.Group()
 		self.soldiers = pygame.sprite.Group()
+		self.friendlyMobs = pygame.sprite.Group()
 
 
 	def loadImage(self, filename):

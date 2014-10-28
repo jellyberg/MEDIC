@@ -1,4 +1,4 @@
-                       C
+ C                     C
      BBBBBBBB          C
      B      B          C
                        C
@@ -8,45 +8,6 @@
      BBBBBBBB          C
                        C
                        C
-                 BBBBB C
+     CCCC        BBBBB C
                        C
-END
-                        
-     BBBBBBBB           
-     B      B           
-                        
-        C               
-                        
-     B      B           
-     BBBBBBBB           
-                        
-                        
-                 BBBBB  
-                        
-END
-                        
-     BBBBBBBB           
-     B      B           
-                        
-        C               
-                        
-     B      B           
-     BBBBBBBB           
-                        
-                        
-                 BBBBB  
-                        
-END
-                        
-     BBBBBBBB           
-     B      B           
-                        
-        C               
-                        
-     B      B           
-     BBBBBBBB           
-                        
-                        
-                 BBBBB  
-                        
 END
