@@ -11,7 +11,9 @@ class GameHandler:
 
 		# TEMP
 		data.level = Level(data, 'dirt')
-		data.level.loadRoom(data, 'test')
+		roomPool = data.level.loadFloorRoomsPatterns('testFloor')
+		data.level.loadRoom(data, roomPool)
+
 
 
 	def update(self, data):
@@ -26,17 +28,18 @@ class GameHandler:
 class Level:
 	terrainTypes = ['grass', 'dirt', 'stone', 'barrel', 'crate']
 	passableTerrainTypes = ['dirt', 'grass']
+	terrainTypeLevelFileCodes = {'G': 'grass', ' ': 'dirt', 'S': 'stone', 'B': 'barrel', 'C': 'crate'}
 	def __init__(self, data, bgCellTerrain):
 		self.loadTerrainImages(data)
 		self.bgCellTerrain = bgCellTerrain
 
 
-	def loadRoom(self, data, roomName):
-		self.genRoom(data)
+	def loadRoom(self, data, roomPool):
+		self.genRoom(random.choice(roomPool), data)
 		self.genSurf(data)
 
 
-	def genRoom(self, data):
+	def genRoom(self, roomCells, data):
 		"""Generates a 2d list self.room containing strings of what terrain type is in each cell"""
 		self.room = []
 		data.nodes = []
@@ -44,7 +47,11 @@ class Level:
 		for x in range(data.XCELLS):
 			column = []
 			for y in range(data.YCELLS):
-				cellType = random.choice(['dirt', 'dirt', 'dirt', 'crate', 'barrel'])
+				cellCode = roomCells[y - 1][x - 1]
+				if cellCode in Level.terrainTypeLevelFileCodes.keys():
+					cellType = Level.terrainTypeLevelFileCodes[cellCode]
+				else:
+					cellType = 'dirt'
 				column.append(cellType)
 
 				# TEMP
@@ -76,6 +83,21 @@ class Level:
 		self.terrainSurfs = {}
 		for terrain in Level.terrainTypes:
 			self.terrainSurfs[terrain] = data.loadImage('assets/terrain/%s.png' %(terrain))
+
+
+	def loadFloorRoomsPatterns(self, filename):
+		"""Loads all the possible rooms for designated floor"""
+		roomsFile = open('assets/levels/%s.txt' %(filename), 'r')
+		roomsFile = list(roomsFile)
+
+		rooms = []
+		lastEnd = 0
+		for i in range(len(roomsFile)):
+			if 'END' in roomsFile[i]:
+				rooms.append(roomsFile[lastEnd:i-1])
+				lastEnd = i + 1
+
+		return rooms
 
 
 

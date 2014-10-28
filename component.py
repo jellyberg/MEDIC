@@ -44,8 +44,6 @@ class MovementComponent:
 		if self.usePathfinding and self.path and data.pixToCells(self.master.rect.topleft) == self.path[0]:
 			del self.path[0]
 
-		print str(self.path)
-
 
 	def goToCoords(self, coords, data):
 		"""Start going towards specified coords"""
@@ -61,7 +59,6 @@ class MovementComponent:
 				if node.coords == endCoords:
 					endNode = node
 			if endNode == 'unspecified':
-				print 'endNode not found. coords: %s' %(str(endCoords))
 				data.input.terminate()
 			self.path = self.findPath(startNode, endNode, data)
 			
@@ -103,7 +100,6 @@ class MovementComponent:
 
 
 		# If we get here, no path was found
-		print 'no path found'
 		return None
 
 
@@ -130,7 +126,6 @@ class MovementComponent:
 		while toNode is not None:
 			path = [toNode.coords] + path  # add the coords to the start of the path
 			toNode = toNode.previous
-		print str(path)
 		return path
 
 
