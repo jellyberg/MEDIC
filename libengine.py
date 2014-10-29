@@ -52,7 +52,7 @@ class Data:
 	def newGame(self):
 		self.XCELLS, self.YCELLS = (24, 12)
 		self.CELLSIZE = 64
-		self.ROOMSIZE = (self.XCELLS * self.CELLSIZE, self.YCELLS * self.CELLSIZE)
+		self.ROOMSIZE = ((self.XCELLS) * self.CELLSIZE, (self.YCELLS) * self.CELLSIZE)
 
 		self.gameSurf = pygame.Surface(self.ROOMSIZE)
 		self.gameSurf = self.gameSurf.convert()

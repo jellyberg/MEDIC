@@ -26,7 +26,6 @@ class Player(pygame.sprite.Sprite):
 		self.collision.updateWorldCollision(data)
 
 		data.gameSurf.blit(self.image, self.rect)
-		print str(self.rect.topleft)
 
 
 	def move(self, data):

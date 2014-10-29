@@ -48,7 +48,7 @@ class Level:
 		for x in range(data.XCELLS):
 			column = []
 			for y in range(data.YCELLS):
-				cellCode = roomCells[y - 1][x - 1]
+				cellCode = roomCells[y][x]
 				if cellCode in Level.terrainTypeLevelFileCodes.keys():
 					cellType = Level.terrainTypeLevelFileCodes[cellCode]
 				else:

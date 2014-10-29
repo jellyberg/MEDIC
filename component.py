@@ -58,8 +58,6 @@ class MovementComponent:
 					startNode = node
 				if node.coords == endCoords:
 					endNode = node
-			if endNode == 'unspecified':
-				data.input.terminate()
 			self.path = self.findPath(startNode, endNode, data)
 			
 		else:
