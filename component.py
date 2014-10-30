@@ -33,7 +33,7 @@ class MovementComponent:
 
 
 			if move[0] != 0 and move[1] != 0: # if moving diagonally move smaller distance in each direction
-				moveSpeed = self.master.speed * 0.6
+				moveSpeed = self.master.speed / 2.0
 			else:
 				moveSpeed = self.master.speed
 

@@ -3,8 +3,10 @@
 import pygame
 pygame.mixer.pre_init(44100, -16, 2, 512)   # use a lower buffersize to reduce sound latency
 pygame.init()
+
 import input, game, math
 from pygame.locals import *
+from dynamicObject import Heal
 
 def run():
 	stateHandler = StateHandler()
@@ -43,10 +45,15 @@ class Data:
 		self.screen = pygame.display.set_mode((self.WINDOWWIDTH, self.WINDOWHEIGHT))#, pygame.locals.FULLSCREEN)
 
 		self.FPSClock = pygame.time.Clock()
-		self.FPS = 200
+		self.FPS = 60
 		self.input = input.Input()
 
-		self.keybinds = {'moveUp': K_w, 'moveLeft': K_a, 'moveRight': K_d, 'moveDown': K_s}
+		self.keybinds = {'moveUp': K_w, 'moveLeft': K_a, 'moveRight': K_d, 'moveDown': K_s,
+						 'shootUp': K_UP, 'shootLeft': K_LEFT, 'shootRight': K_RIGHT, 'shootDown': K_DOWN}
+
+		self.directionsDict = {'up': (0, -1), 'down': (0, 1), 'left': (-1, 0), 'right': (1, 0)}
+
+		Heal.image = self.loadImage('assets/objects/heal.png')
 
 
 	def newGame(self):
@@ -59,9 +66,13 @@ class Data:
 
 		self.gameRect = self.gameSurf.get_rect(center = (self.WINDOWWIDTH / 2, self.WINDOWHEIGHT / 2))
 
+		self.dynamicObjects = pygame.sprite.Group()
+
 		self.players  = pygame.sprite.Group()
 		self.soldiers = pygame.sprite.Group()
 		self.friendlyMobs = pygame.sprite.Group()
+
+		self.heals = pygame.sprite.Group()
 
 
 	def loadImage(self, filename):

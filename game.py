@@ -2,7 +2,6 @@
 # a game by Adam Binks
 
 import pygame, random
-
 from mob import Soldier, Player
 
 class GameHandler:
@@ -21,6 +20,7 @@ class GameHandler:
 
 		data.soldiers.update(data)
 		data.players.update(data)
+		data.dynamicObjects.update(data)
 
 		data.screen.blit(data.gameSurf, data.gameRect)
 
