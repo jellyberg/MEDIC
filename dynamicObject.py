@@ -4,8 +4,8 @@
 import pygame, math
 
 class Heal(pygame.sprite.Sprite):
-	"""A projectile that disappears when it hits anything. If fit hits a soldier, it restores some HP"""
-	def __init__(self, pos, speed, direction, range, data):
+	"""A projectile that disappears when it hits anything. If it hits a soldier, it restores some HP"""
+	def __init__(self, pos, speed, direction, range, healAmount, data):
 		"""Velocity is a tuple (x velocity, y velocity)"""
 		pygame.sprite.Sprite.__init__(self)
 		self.add(data.dynamicObjects)
@@ -18,6 +18,7 @@ class Heal(pygame.sprite.Sprite):
 		self.velocity = (direction[0] * speed, direction[1] * speed)
 		self.range = range
 		self.startCoords = pos
+		self.healAmount = healAmount
 
 
 	def update(self, data):
@@ -27,4 +28,16 @@ class Heal(pygame.sprite.Sprite):
 				self.kill()
 		self.rect.topleft = self.trueCoords
 
+		self.checkForCollisions(data)
+
 		data.gameSurf.blit(self.image, self.rect)
+
+
+	def checkForCollisions(self, data):
+		"""Kill self if collide with non-passable coord or any mob. If collide with a soldier, heal them"""
+		if data.level.rectCollidesScreenEdge(self.rect, data) or not data.level.rectIsOnPassableCells(self.rect, data):
+			self.kill()
+
+		collidedSoldier = pygame.sprite.spritecollideany(self, data.soldiers)
+		if collidedSoldier:
+			collidedSoldier.heal(self.healAmount)

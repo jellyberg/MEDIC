@@ -18,9 +18,9 @@ class GameHandler:
 	def update(self, data):
 		data.gameSurf.blit(data.level.surf, (0, 0))
 
+		data.dynamicObjects.update(data)
 		data.soldiers.update(data)
 		data.players.update(data)
-		data.dynamicObjects.update(data)
 
 		data.screen.blit(data.gameSurf, data.gameRect)
 
@@ -105,6 +105,32 @@ class Level:
 	def coordIsPassable(self, coord):
 		"""Returns True if the given coordinate can be walked through, else returns False"""
 		return self.room[coord[0]][coord[1]] in Level.passableTerrainTypes
+
+
+	def pointIsPassable(self, pix, data):
+		"""Returns True if the given coordinate is in a cell that can be walked through, else returns False"""
+		return self.coordIsPassable(data.pixToCells(pix))
+
+
+	def rectIsOnPassableCells(self, rect, data):
+		"""Returns True if all four corners of the rect are on cells that can be walked through"""
+		for point in [rect.topleft, rect.topright, rect.bottomleft, rect.bottomright]:
+			if not self.pointIsPassable(point, data):
+				return False
+		return True
+
+
+	def pointIsOnScreen(self, point, data):
+		"""Return True if point is on game surf"""
+		return (0 < point[0] < data.gameRect.width) and (0 < point[1] < data.gameRect.height)
+
+
+	def rectCollidesScreenEdge(self, rect, data):
+		"""Return True if rect is totally within game surf"""
+		for point in [rect.topleft, rect.topright, rect.bottomleft, rect.bottomright]:
+			if not self.pointIsOnScreen(point, data):
+				return True
+		return False
 
 
 

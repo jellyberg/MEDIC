@@ -1,7 +1,7 @@
 # 
 # a game by Adam Binks
 
-import pygame, random, time, math
+import pygame, random, time
 from component import MovementComponent, CollisionComponent
 from dynamicObject import Heal
 
@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
 		self.acceleration = 8.0
 		self.decceleration = 1.1
 
+		self.healthPerHeal = Player.baseStats['healthPerHeal']
 		self.healRange = Player.baseStats['healRange']
 		self.healTravelSpeed = Player.baseStats['healTravelSpeed']
 		self.fireRate = Player.baseStats['fireRate']
@@ -42,8 +43,6 @@ class Player(pygame.sprite.Sprite):
 
 
 	def move(self, data):
-		print str(self.velocity)
-
 		hasMoved = [False, False]
 
 		for direction in ['up', 'down', 'left', 'right']:
@@ -91,9 +90,7 @@ class Player(pygame.sprite.Sprite):
 
 	def shoot(self, direction, data):
 		"""Shoots a heal in the specified direction"""
-		Heal(self.rect.center, self.healTravelSpeed, data.directionsDict[direction], self.healRange, data)
-
-
+		Heal(self.rect.center, self.healTravelSpeed, data.directionsDict[direction], self.healRange, self.healthPerHeal, data)
 
 
 class Soldier(pygame.sprite.Sprite):
@@ -106,6 +103,7 @@ class Soldier(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(topleft = data.cellToPix(coords))
 
 		self.speed = 10
+		self.health = 200
 
 		self.movement = MovementComponent(self, True)
 
@@ -116,3 +114,8 @@ class Soldier(pygame.sprite.Sprite):
 
 		self.movement.update(data)
 		data.gameSurf.blit(self.image, self.rect)
+
+
+	def heal(self, amount):
+		self.health += amount
+		print 'healed!'
