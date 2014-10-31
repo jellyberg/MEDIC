@@ -102,30 +102,9 @@ class Level:
 		return rooms
 
 
-	def coordIsPassable(self, coord, data):
+	def coordIsPassable(self, coord):
 		"""Returns True if the given coordinate can be walked through, else returns False"""
-		return (not (0 < coord[0] < data.gameRect.width or 0 < coord[1] < data.gameRect.height) \
-				or self.room[coord[0]][coord[1]] in Level.passableTerrainTypes)
-
-
-	def rectCornersAreOnPassableCoords(self, rect, data):
-		"""Returns True if all four corners of the rect are on coords that can be walked through"""
-		for pos in [rect.topleft, rect.bottomleft, rect.topright, rect.bottomright]:
-			if not self.coordIsPassable(data.pixToCells(pos), data):
-				return False
-		return True
-
-
-	def isOnScreen(self, rect, data):
-		"""Returns True if the rect is totally within the bounds of the gameSurf"""
-		for x in [rect.left, rect.right]:
-			if x < 0 or x > data.gameRect.width:
-				return False
-		for y in [rect.top, rect.bottom]:
-			if y < 0 or y > data.gameRect.height:
-				return False
-
-		return True
+		return self.room[coord[0]][coord[1]] in Level.passableTerrainTypes
 
 
 
