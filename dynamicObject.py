@@ -27,4 +27,12 @@ class Heal(pygame.sprite.Sprite):
 				self.kill()
 		self.rect.topleft = self.trueCoords
 
+		self.checkForCollisions(data)
+
 		data.gameSurf.blit(self.image, self.rect)
+
+
+	def checkForCollisions(self, data):
+		"""Heal disappears if it collides with an impassable cell or any mob"""
+		if not data.level.isOnScreen(self.rect, data) or not data.level.rectCornersAreOnPassableCoords(self.rect, data):
+			self.kill()

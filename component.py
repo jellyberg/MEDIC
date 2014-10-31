@@ -190,4 +190,4 @@ class CollisionComponent:
 
 
 	def pointIsPassable(self, point, data):
-		return (data.level.coordIsPassable(data.pixToCells(point)), data.pixToCells(point))
+		return (data.level.coordIsPassable(data.pixToCells(point), data), data.pixToCells(point))
