@@ -55,8 +55,10 @@ class Data:
 
 		Heal.image = self.loadImage('assets/objects/heal.png')
 
+		#				   R    G    B
 		self.WHITE     = (255, 255, 255)
 		self.BLACK     = (  0,   0,   0)
+		self.BLUE      = ( 30,  30, 220)
 		self.SKYBLUE   = (135, 206, 250)
 		self.DARKBLUE  = (  0,  35, 102)
 		self.YELLOW    = (255, 255, 102)

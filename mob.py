@@ -105,13 +105,22 @@ class Soldier(pygame.sprite.Sprite):
 
 		self.speed = 15
 		self.maxHealth = 200
-		self.health = 20 # self.maxHealth
+		self.health = self.maxHealth - 5
+		self.maxOverheal = 300
+		self.overHealDecay = 1
 
 		self.movement = MovementComponent(self, True)
 		self.healthBar = HealthBar(self.maxHealth, data.GREEN, self.rect, data)
 
 
 	def update(self, data):
+		if self.health > self.maxHealth:
+			if self.health > self.maxOverheal:
+				self.health = self.maxOverheal
+			self.health -= self.overHealDecay * data.dt
+			if self.health < self.maxHealth:
+				self.health = self.maxHealth
+
 		if not self.movement.path:
 			self.movement.goToCoords((random.randint(0, data.XCELLS - 1), random.randint(0, data.YCELLS - 1)), data)
 

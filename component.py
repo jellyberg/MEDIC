@@ -2,7 +2,7 @@
 # a game by Adam Binks
 
 import pygame, math
-from math import radians
+from math import radians, degrees
 
 class MovementComponent:
 	"""Handles basic movement in 8 directions"""
@@ -210,8 +210,13 @@ class HealthBar:
 
 	def draw(self, health, masterRect, data):
 		self.rect.center = masterRect.center
-		self.displayedHealth += (health - self.displayedHealth) * 0.1 * data.dt
+		self.displayedHealth += (health - self.displayedHealth) * 0.3 * data.dt
 		pygame.draw.arc(data.gameSurf, self.colour, self.rect,
 					    radians(90), radians((self.displayedHealth / float(self.maxHealth)) * 360.0 + 90), 4)
 
-		print str((self.displayedHealth / float(self.maxHealth)) * 360.0)
+		if self.displayedHealth > self.maxHealth:
+			overHeal = self.displayedHealth - self.maxHealth
+			pygame.draw.arc(data.gameSurf, data.BLUE, self.rect,
+					    radians(90), radians((overHeal / float(self.maxHealth)) * 360.0 + 90), 4)
+
+			print str(overHeal)
