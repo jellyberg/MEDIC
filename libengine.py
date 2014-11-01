@@ -55,6 +55,18 @@ class Data:
 
 		Heal.image = self.loadImage('assets/objects/heal.png')
 
+		self.WHITE     = (255, 255, 255)
+		self.BLACK     = (  0,   0,   0)
+		self.SKYBLUE   = (135, 206, 250)
+		self.DARKBLUE  = (  0,  35, 102)
+		self.YELLOW    = (255, 255, 102)
+		self.DARKYELLOW= (204, 204,   0)
+		self.GREEN     = (110, 255, 100)
+		self.ORANGE    = (255, 165,   0)
+		self.DARKGREY  = ( 60,  60,  60)
+		self.LIGHTGREY = (180, 180, 180)
+		self.CREAM     = (255, 255, 204)
+
 
 	def newGame(self):
 		self.XCELLS, self.YCELLS = (24, 12)

@@ -2,13 +2,13 @@
 # a game by Adam Binks
 
 import pygame, random, time
-from component import MovementComponent, CollisionComponent
+from component import MovementComponent, CollisionComponent, HealthBar
 from dynamicObject import Heal
 
 
 class Player(pygame.sprite.Sprite):
-	baseStats = {'speed': 15, 'fireRate': 0.3, 'healthPerHeal': 20, 'healRange': 240, 
-				 'healTravelSpeed': 20, 'health': 'TODO'}
+	baseStats = {'speed': 20, 'fireRate': 0.3, 'healthPerHeal': 20, 'healRange': 320, 
+				 'healTravelSpeed': 30, 'health': 'TODO'}
 	def __init__(self, coords, data):
 		pygame.sprite.Sprite.__init__(self)
 		self.add(data.players)
@@ -85,6 +85,7 @@ class Player(pygame.sprite.Sprite):
 			for direction in ['up', 'down', 'left', 'right']:
 				if data.keybinds['shoot%s' %(direction.capitalize())] in data.input.pressedKeys:
 					self.shoot(direction, data)
+					break
 			self.lastShootTime = time.time()
 
 
@@ -102,10 +103,12 @@ class Soldier(pygame.sprite.Sprite):
 		self.image = data.loadImage('assets/mobs/soldier.png')
 		self.rect = self.image.get_rect(topleft = data.cellToPix(coords))
 
-		self.speed = 10
-		self.health = 200
+		self.speed = 15
+		self.maxHealth = 200
+		self.health = 20 # self.maxHealth
 
 		self.movement = MovementComponent(self, True)
+		self.healthBar = HealthBar(self.maxHealth, data.GREEN, self.rect, data)
 
 
 	def update(self, data):
@@ -114,8 +117,8 @@ class Soldier(pygame.sprite.Sprite):
 
 		self.movement.update(data)
 		data.gameSurf.blit(self.image, self.rect)
+		self.healthBar.draw(self.health, self.rect, data)
 
 
 	def heal(self, amount):
 		self.health += amount
-		print 'healed!'

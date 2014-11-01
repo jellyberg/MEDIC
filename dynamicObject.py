@@ -41,3 +41,4 @@ class Heal(pygame.sprite.Sprite):
 		collidedSoldier = pygame.sprite.spritecollideany(self, data.soldiers)
 		if collidedSoldier:
 			collidedSoldier.heal(self.healAmount)
+			self.kill()

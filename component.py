@@ -2,6 +2,7 @@
 # a game by Adam Binks
 
 import pygame, math
+from math import radians
 
 class MovementComponent:
 	"""Handles basic movement in 8 directions"""
@@ -191,3 +192,26 @@ class CollisionComponent:
 
 	def pointIsPassable(self, point, data):
 		return (data.level.coordIsPassable(data.pixToCells(point)), data.pixToCells(point))
+
+
+
+class HealthBar:
+	"""A circular healthbar that smoothly interpolates when health goes up/down"""
+	def __init__(self, maxHealth, colour, masterRect, data):
+		"""The healthbar's radius is a little bigger than the rect"""
+		self.maxHealth = maxHealth
+		self.colour = colour
+		self.displayedHealth = 0.0
+		
+		radius = max(masterRect.width, masterRect.height) + 20
+		self.rect = pygame.Rect((0, 0), (radius, radius))
+		self.rect.center = masterRect.center
+
+
+	def draw(self, health, masterRect, data):
+		self.rect.center = masterRect.center
+		self.displayedHealth += (health - self.displayedHealth) * 0.1 * data.dt
+		pygame.draw.arc(data.gameSurf, self.colour, self.rect,
+					    radians(90), radians((self.displayedHealth / float(self.maxHealth)) * 360.0 + 90), 4)
+
+		print str((self.displayedHealth / float(self.maxHealth)) * 360.0)
